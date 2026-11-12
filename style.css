@@ -1,1 +1,345 @@
+/* =========================================
+   VARIÁVEIS E IDENTIDADE VISUAL (SOL + ÁGUA)
+   ========================================= */
+:root {
+    --cor-sol: #FF7A00;
+    --cor-sol-claro: #FFF4E5;
+    --cor-agua: #0066CC;
+    --cor-agua-escura: #003B75;
+    --cor-agua-clara: #E6F2FF;
+    --cor-fundo: #FFFFFF;
+    --cor-fundo-alt: #F3F8FC;
+    --cor-texto: #1A202C;
+    --cor-texto-suave: #4A5568;
+    --cor-borda: #CBD5E0;
+    --fonte-principal: 'Outfit', sans-serif;
+    --tamanho-base: 16px;
+    --raio-borda: 12px;
+    --sombra: 0 4px 14px rgba(0, 59, 117, 0.08);
+}
 
+/* Modo Alto Contraste */
+body.alto-contraste {
+    --cor-sol: #FFD700;
+    --cor-sol-claro: #141414;
+    --cor-agua: #00FFFF;
+    --cor-agua-escura: #000000;
+    --cor-agua-clara: #141414;
+    --cor-fundo: #000000;
+    --cor-fundo-alt: #0D0D0D;
+    --cor-texto: #FFFFFF;
+    --cor-texto-suave: #E2E8F0;
+    --cor-borda: #FFD700;
+    --sombra: none;
+}
+
+/* Modo Fonte para Dislexia */
+body.fonte-dislexia {
+    --fonte-principal: 'Atkinson Hyperlegible', 'Comic Sans MS', sans-serif;
+    letter-spacing: 0.06em;
+    word-spacing: 0.14em;
+    line-height: 1.8;
+}
+
+/* =========================================
+   RESET E BASE
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: var(--tamanho-base);
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--fonte-principal);
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    line-height: 1.6;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+:focus-visible {
+    outline: 3px solid var(--cor-sol);
+    outline-offset: 3px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    background: var(--cor-sol);
+    color: #000;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 9999;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 16px;
+}
+
+.container {
+    width: 92%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+/* =========================================
+   BARRA DE ACESSIBILIDADE
+   ========================================= */
+.a11y-bar {
+    background-color: var(--cor-agua-escura);
+    color: #FFFFFF;
+    padding: 8px 0;
+    font-size: 0.9rem;
+    border-bottom: 2px solid var(--cor-sol);
+}
+
+.a11y-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.a11y-controls button {
+    background: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.a11y-controls button:hover,
+.a11y-controls button[aria-pressed="true"] {
+    background: var(--cor-sol);
+    color: #000000;
+    border-color: var(--cor-sol);
+}
+
+/* =========================================
+   NAVEGAÇÃO (MOBILE-FIRST)
+   ========================================= */
+.navbar {
+    background-color: var(--cor-fundo);
+    border-bottom: 1px solid var(--cor-borda);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--cor-sol);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.logo .destaque-agua {
+    color: var(--cor-agua);
+}
+
+.menu-toggle {
+    background: none;
+    border: 2px solid var(--cor-agua);
+    color: var(--cor-agua);
+    font-size: 1.4rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.nav-links {
+    display: none;
+    flex-direction: column;
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--cor-fundo);
+    border-bottom: 2px solid var(--cor-agua);
+    padding: 16px;
+    gap: 10px;
+}
+
+.nav-links.aberto {
+    display: flex;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--cor-texto);
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: block;
+}
+
+.nav-links a:hover {
+    background-color: var(--cor-agua-clara);
+    color: var(--cor-agua);
+}
+
+/* =========================================
+   HERO (SOL + ÁGUA)
+   ========================================= */
+.hero {
+    background: linear-gradient(135deg, var(--cor-sol-claro) 0%, var(--cor-agua-clara) 100%);
+    padding: 48px 0;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+}
+
+.badge {
+    display: inline-block;
+    background: var(--cor-sol);
+    color: #000000;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+.hero h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 16px;
+}
+
+.hero p {
+    font-size: 1.08rem;
+    color: var(--cor-texto-suave);
+    margin-bottom: 24px;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn {
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.btn-primary {
+    background-color: var(--cor-agua);
+    color: #FFFFFF;
+}
+
+body.alto-contraste .btn-primary {
+    color: #000000;
+}
+
+.btn-primary:hover {
+    background-color: var(--cor-agua-escura);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border-color: var(--cor-agua);
+    color: var(--cor-agua);
+}
+
+.piscina-ilustracao {
+    background: var(--cor-fundo);
+    border: 2px solid var(--cor-agua);
+    border-radius: var(--raio-borda);
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.sol-animado {
+    width: 54px;
+    height: 54px;
+    background: var(--cor-sol);
+    border-radius: 50%;
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    box-shadow: 0 0 25px var(--cor-sol);
+    animation: pulsar 3s infinite alternate;
+}
+
+.ondas-iv {
+    display: flex;
+    justify-content: space-around;
+    color: var(--cor-sol);
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    animation: flutuar 2.5s infinite alternate ease-in-out;
+}
+
+.agua-superficie {
+    background: var(--cor-agua);
+    color: #FFFFFF;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+body.alto-contraste .agua-superficie {
+    color: #000000;
+}
+
+@keyframes pulsar {
+    from { transform: scale(1); }
+    to { transform: scale(1.12); }
+}
+
+@keyframes flutuar {
+    from { transform: translateY(4px); }
+    to { transform: translateY(-10px); }
+}
+
+/* =========================================
+   SEÇÕES, CARDS DE FÍSICA E 4 MECANISMOS
+   ========================================= */
+.section {
+    padding: 56px 0;
+}
+
+.bg-alt {
+    background-color: var(--cor-fundo-alt);
