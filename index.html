@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TermoPool | Radiação Infravermelha e Eficiência Térmica</title>
+    <title>TermoPool | Radiação Infravermelha e Eficiência Térmica Escolar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Link de salto para navegação por teclado -->
+    <!-- Link de salto para navegação 100% por teclado -->
     <a href="#conteudo-principal" class="skip-link">Pular diretamente para o conteúdo principal</a>
 
-    <!-- Barra Superior de Acessibilidade -->
+    <!-- Barra de Ferramentas de Acessibilidade -->
     <header class="a11y-bar" role="region" aria-label="Ferramentas de Acessibilidade">
         <div class="container a11y-controls">
             <span><strong>Acessibilidade:</strong></span>
             <button type="button" id="btn-contraste" aria-pressed="false">🌓 Alto Contraste</button>
             <button type="button" id="btn-dislexia" aria-pressed="false">📖 Fonte Dislexia</button>
-            <button type="button" id="btn-fonte-mais" aria-label="Aumentar tamanho da fonte">A+</button>
-            <button type="button" id="btn-fonte-menos" aria-label="Diminuir tamanho da fonte">A-</button>
+            <button type="button" id="btn-fonte-mais" aria-label="Aumentar tamanho do texto">A+</button>
+            <button type="button" id="btn-fonte-menos" aria-label="Diminuir tamanho do texto">A-</button>
+            <button type="button" id="btn-espacamento" aria-pressed="false">↔️ Espaçamento</button>
             <button type="button" id="btn-ler-pagina" aria-pressed="false">🔊 Ouvir Resumo</button>
         </div>
     </header>
@@ -34,12 +35,12 @@
                 ☰
             </button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="#fisica">Física & Pesquisa</a></li>
+                <li><a href="#fisica">Física & Questões</a></li>
                 <li><a href="#mecanismos">4 Mecanismos</a></li>
-                <li><a href="#simulador">Simulador Interativo</a></li>
-                <li><a href="#robotica">Robótica & Automação</a></li>
+                <li><a href="#simulador">Simulador & Gráficos</a></li>
+                <li><a href="#robotica">Robótica</a></li>
                 <li><a href="#tecnociencia">Tecnociência</a></li>
-                <li><a href="#mapa-site">Mapa do Site</a></li>
+                <li><a href="#quiz">Quiz</a></li>
             </ul>
         </div>
     </nav>
@@ -48,24 +49,24 @@
     <section id="inicio" class="hero">
         <div class="container hero-grid">
             <div class="hero-text">
-                <span class="badge">Projeto Interdisciplinar • Sol + Água</span>
+                <span class="badge">Programação • Robótica • Física • Tecnociência</span>
                 <h1>Radiação Infravermelha e Perda de Energia da Piscina</h1>
-                <p>Integração entre Programação, Robótica, Física e Tecnociência para tornar o aquecimento da piscina do colégio econômico, sustentável e eficiente através do controle de emissão e absorção térmica.</p>
+                <p>Uma solução prática e econômica para o aquecimento da piscina escolar: entenda como controlar a emissão e absorção de radiação térmica para conservar o calor da água sem desperdício energético.</p>
                 <div class="hero-actions">
-                    <a href="#simulador" class="btn btn-primary">Abrir Simulador Térmico</a>
-                    <a href="#fisica" class="btn btn-secondary">Ver Base Científica</a>
+                    <a href="#simulador" class="btn btn-primary">Explorar Simulador e Gráficos</a>
+                    <a href="#quiz" class="btn btn-secondary">Fazer Quiz Avaliativo</a>
                 </div>
             </div>
             <div class="hero-visual" aria-hidden="true">
                 <div class="piscina-ilustracao">
                     <div class="sol-animado"></div>
                     <div class="ondas-iv">
-                        <span>↑ IV Emitido</span>
-                        <span>↓ IV Atmosfera</span>
+                        <span>↑ IV Emitido (Água)</span>
+                        <span>↓ IV Absorvido (Céu)</span>
                         <span>↑ IV Emitido</span>
                     </div>
                     <div class="agua-superficie">
-                        <p>Equilíbrio Térmico da Água</p>
+                        <p>Balanço Térmico: Sol + Água</p>
                     </div>
                 </div>
             </div>
@@ -73,40 +74,286 @@
     </section>
 
     <main id="conteudo-principal">
-        <!-- Seção 1: Física (Questões Orientadoras baseadas no PDF) -->
+        <!-- Seção 1: Física e Questões Orientadoras -->
         <section id="fisica" class="section">
             <div class="container">
                 <header class="section-header">
                     <h2>Física: Emissão e Absorção de Radiação Térmica</h2>
-                    <p>Respostas fundamentadas na pesquisa científica sobre o comportamento térmico da piscina escolar.</p>
+                    <p>Fundamentação científica baseada na pesquisa sobre comportamento térmico da piscina.</p>
                 </header>
+
+                <div class="destaque-conceito" tabindex="0">
+                    <h3>O que é Radiação Infravermelha?</h3>
+                    <p>É um tipo de onda eletromagnética (com comprimento de onda maior que a luz vermelha visível e invisível aos olhos humanos) emitida por todo corpo com temperatura acima do zero absoluto devido à agitação térmica de suas partículas. Na temperatura comum de uma piscina, a água emite energia predominantemente nessa faixa — gerando uma troca constante entre o que a piscina irradia e o que absorve do solo, construções e atmosfera.</p>
+                </div>
 
                 <div class="cards-grid">
                     <article class="card" tabindex="0">
-                        <div class="card-num">01</div>
+                        <div class="card-num">Questão 01</div>
                         <h3>Por que objetos aquecidos emitem radiação infravermelha?</h3>
-                        <p>Todo corpo com temperatura acima do zero absoluto possui partículas em constante agitação térmica. Esse movimento gera <strong>ondas eletromagnéticas</strong> (com comprimentos maiores que a luz vermelha visível) que transportam energia para o ambiente sem precisar de contato físico ou meio material. Na piscina, há uma troca constante: a água emite radiação IV e absorve radiação do solo, construções e atmosfera.</p>
+                        <p>Porque seus átomos e moléculas possuem energia térmica e estão em constante agitação. Esse movimento gera <strong>ondas eletromagnéticas</strong> que transportam energia para o ambiente sem precisar de contato físico ou meio material (podendo propagar-se até no vácuo).</p>
                     </article>
 
                     <article class="card" tabindex="0">
-                        <div class="card-num">02</div>
+                        <div class="card-num">Questão 02</div>
                         <h3>Como a temperatura influencia a emissão?</h3>
-                        <p>Pela <strong>Lei de Stefan-Boltzmann</strong> ($P = \varepsilon \cdot \sigma \cdot A \cdot T^4$), a potência irradiada cresce com a <strong>quarta potência</strong> da temperatura absoluta em Kelvin ($T^4$). Assim, elevar um pouco a temperatura da água aumenta muito a energia emitida. Quando a temperatura da água supera a temperatura radiativa efetiva do entorno (como o céu limpo à noite), ocorre perda líquida de calor.</p>
+                        <p>Pela <strong>Lei de Stefan-Boltzmann</strong> ($P = \varepsilon \cdot \sigma \cdot A \cdot T^4$), a potência irradiada cresce proporcionalmente à <strong>quarta potência</strong> da temperatura absoluta em Kelvin ($T^4$). Pequenos aumentos na temperatura da água elevam muito a energia emitida por segundo; quando a água está mais quente que o entorno (como o céu limpo à noite), ocorre perda líquida de calor.</p>
                     </article>
 
                     <article class="card" tabindex="0">
-                        <div class="card-num">03</div>
-                        <h3>Por que a piscina perde calor mesmo com o ar parado?</h3>
-                        <p>A ausência de vento não impede o resfriamento porque três mecanismos agem de forma independente: <strong>1) Radiação IV</strong> (propaga-se sem precisar de movimento do ar); <strong>2) Evaporação</strong> (moléculas escapam da superfície levando energia térmica, mesmo sem vento); e <strong>3) Convecção natural</strong> (o ar aquecido pela água sobe espontaneamente por diferença de densidade, dando lugar ao ar frio).</p>
+                        <div class="card-num">Questão 03</div>
+                        <h3>Por que a piscina pode perder calor mesmo quando o ar está relativamente parado?</h3>
+                        <p>Porque o vento não é obrigatório para o resfriamento. Três processos independentes continuam agindo sem vento: <strong>1) Radiação infravermelha</strong> (não precisa de movimento do ar); <strong>2) Evaporação</strong> (moléculas escapam da superfície levando energia térmica); e <strong>3) Convecção natural</strong> (o ar aquecido pela água sobe espontaneamente por diferença de densidade, sendo substituído por ar frio).</p>
                     </article>
 
                     <article class="card" tabindex="0">
-                        <div class="card-num">04</div>
-                        <h3>Como uma cobertura reduz as perdas de energia?</h3>
-                        <p>A cobertura atua como barreira física e radiativa entre a água e o ambiente: bloqueia a passagem de vapor (reduzindo a <strong>evaporação</strong>), impede o contato direto com o ar e o vento (reduzindo a <strong>convecção</strong>) e atua como superfície intermediária que altera a troca radiativa com o céu frio (reduzindo a perda por <strong>radiação IV</strong> conforme o material e isolamento da capa).</p>
+                        <div class="card-num">Questão 04</div>
+                        <h3>Como uma cobertura pode reduzir as perdas de energia?</h3>
+                        <p>Funcionando como barreira física e superfície intermediária: dificulta a saída de vapor (cortando a <strong>evaporação</strong>), isola a água do contato com o ar e o vento (reduzindo a <strong>convecção</strong>) e altera a troca radiativa com o céu frio (diminuindo a perda por <strong>radiação IV</strong> conforme o material, espessura e isolamento da manta).</p>
                     </article>
                 </div>
             </div>
         </section>
 
-        <!-- Seção 2: Os 4 Mecanismos de Perda Térmica (Dados
+        <!-- Seção 2: Os 4 Mecanismos de Transferência Térmica -->
+        <section id="mecanismos" class="section bg-alt">
+            <div class="container">
+                <header class="section-header">
+                    <h2>Os 4 Mecanismos de Perda de Energia da Piscina</h2>
+                    <p>Compreender todos os caminhos de fuga do calor é essencial para projetar um sistema econômico na escola.</p>
+                </header>
+
+                <div class="mecanismos-grid">
+                    <div class="mec-card destaque-evap" tabindex="0">
+                        <span class="mec-tag">~70% das perdas (Ref. DOE/EUA)</span>
+                        <h3>1. Evaporação</h3>
+                        <p>Moléculas da superfície passam do estado líquido para o gasoso e levam consigo energia térmica. Intensifica-se quando a água está quente, o ar está seco, há vento ou a área superficial é grande.</p>
+                    </div>
+                    <div class="mec-card" tabindex="0">
+                        <span class="mec-tag">Foco da Pesquisa</span>
+                        <h3>2. Radiação Infravermelha</h3>
+                        <p>Troca contínua de ondas eletromagnéticas térmicas. À noite, sob céu limpo (baixa temperatura radiativa efetiva), a água emite muito mais radiação IV do que recebe de volta.</p>
+                    </div>
+                    <div class="mec-card" tabindex="0">
+                        <span class="mec-tag">Natural vs. Forçada</span>
+                        <h3>3. Convecção</h3>
+                        <p>Transferência de calor pelo movimento do ar em contato com a superfície. Ocorre por <em>convecção natural</em> (diferença de densidade do ar) ou <em>forçada</em> (ação do vento).</p>
+                    </div>
+                    <div class="mec-card" tabindex="0">
+                        <span class="mec-tag">Contato Direto</span>
+                        <h3>4. Condução</h3>
+                        <p>Transferência de calor da água para as paredes, fundo e solo em contato direto. Representa parcela menor em piscinas enterradas, dependendo da espessura e do material construtivo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção 3: Simulador Interativo, Animação e Gráficos -->
+        <section id="simulador" class="section">
+            <div class="container">
+                <header class="section-header">
+                    <h2>Simulador Térmico, Animação e Gráficos Interativos</h2>
+                    <p>Ajuste os parâmetros da piscina escolar para observar a animação do fluxo de radiação infravermelha e o gráfico dinâmico de perda de energia.</p>
+                </header>
+
+                <div class="simulador-box">
+                    <!-- Controles -->
+                    <div class="sim-controles">
+                        <div class="control-group">
+                            <label for="temp-agua">Temperatura da Água: <strong id="val-temp-agua">28°C</strong></label>
+                            <input type="range" id="temp-agua" min="20" max="35" value="28" step="1">
+                        </div>
+
+                        <div class="control-group">
+                            <label for="temp-ambiente">Temperatura Radiativa do Céu/Ambiente: <strong id="val-temp-ambiente">14°C</strong></label>
+                            <input type="range" id="temp-ambiente" min="5" max="30" value="14" step="1">
+                        </div>
+
+                        <div class="control-group">
+                            <label for="condicao-ar">Condição do Ar (Convecção e Evaporação):</label>
+                            <select id="condicao-ar" class="select-input">
+                                <option value="parado">Ar Relativamente Parado (Sem vento)</option>
+                                <option value="vento">Com Vento Noturno (Convecção Forçada)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="tipo-cobertura">Solução de Cobertura (Projeto Escolar):</label>
+                            <select id="tipo-cobertura" class="select-input">
+                                <option value="nenhuma">Sem Cobertura (Superfície Exposta)</option>
+                                <option value="simples">Lona Plástica Comum (Bloqueia Evaporação)</option>
+                                <option value="termica" selected>Manta Térmica Isolante (Bloqueia Evaporação + IV)</option>
+                            </select>
+                        </div>
+
+                        <div class="sim-resultados" aria-live="polite">
+                            <div class="res-item">
+                                <span>Perda Líquida por Radiação IV:</span>
+                                <strong id="res-iv">0 W/m²</strong>
+                            </div>
+                            <div class="res-item">
+                                <span>Perda Total Estimada (12h noturnas):</span>
+                                <strong id="res-total-kwh">0 kWh</strong>
+                            </div>
+                            <div class="res-item">
+                                <span>Economia no Aquecimento Escolar:</span>
+                                <strong id="res-economia">0%</strong>
+                            </div>
+                            <div class="res-status-box" id="res-diagnostico"></div>
+                        </div>
+                    </div>
+
+                    <!-- Animação Canvas -->
+                    <div class="sim-visual">
+                        <h3>Animação: Fluxo de Radiação Infravermelha</h3>
+                        <canvas id="canvas-termico" width="520" height="330" aria-label="Animação interativa mostrando ondas laranjas de radiação infravermelha emitidas pela água, ondas azuis absorvidas da atmosfera e ondas verdes refletidas pela cobertura térmica."></canvas>
+                        <p class="legenda-canvas"><strong>Legenda:</strong> Laranja = IV emitido pela água | Azul = IV absorvido da atmosfera | Verde = IV retido pela cobertura.</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico Interativo de Barras (Distribuição de Perdas) -->
+                <div class="grafico-box">
+                    <div class="grafico-header">
+                        <h3>Gráfico Interativo: Composição da Perda Térmica (kWh/noite)</h3>
+                        <p>Observe como cada mecanismo (Evaporação, Radiação IV, Convecção e Condução) responde em tempo real às configurações acima.</p>
+                    </div>
+                    <canvas id="canvas-grafico" width="900" height="280" aria-label="Gráfico de barras dinâmico comparando a perda de energia por evaporação, radiação infravermelha, convecção e condução."></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção 4: Robótica e Automação Escolar -->
+        <section id="robotica" class="section bg-alt">
+            <div class="container">
+                <header class="section-header">
+                    <h2>Robótica: Automação Econômica da Piscina Escolar</h2>
+                    <p>Como integrar sensores infravermelhos e atuadores para cobrir a piscina automaticamente nos momentos críticos.</p>
+                </header>
+
+                <div class="robotica-grid">
+                    <div class="robotica-info">
+                        <h3>Proposta de Protótipo Automatizado</h3>
+                        <ul class="lista-tech">
+                            <li><strong>Sensor Infravermelho (MLX90614):</strong> Mede sem contato a radiação IV emitida pela superfície da água, determinando sua temperatura real.</li>
+                            <li><strong>Sensor Climático (DHT22) e Luminosidade (LDR):</strong> Identificam o pôr do sol, a queda da temperatura do ar e a umidade relativa.</li>
+                            <li><strong>Microcontrolador (ESP32):</strong> Calcula a perda líquida de calor e verifica se há aulas agendadas na piscina do colégio.</li>
+                            <li><strong>Enrolador Motorizado (Motor DC + Fim de Curso):</strong> Estende a manta térmica automaticamente à noite para conservar o calor acumulado durante o dia.</li>
+                        </ul>
+                    </div>
+
+                    <div class="robotica-console">
+                        <h3>Simulador de Decisão do Controlador (ESP32)</h3>
+                        <p>Selecione uma situação climática na escola para testar a lógica robótica:</p>
+                        <div class="botoes-cenario">
+                            <button type="button" class="btn-cenario" data-cenario="dia-sol">☀️ Dia Ensolarado (Aula)</button>
+                            <button type="button" class="btn-cenario" data-cenario="noite-limpa">🌌 Noite de Céu Limpo</button>
+                            <button type="button" class="btn-cenario" data-cenario="ar-parado">🍃 Fim de Tarde (Ar Parado)</button>
+                        </div>
+                        <div class="terminal-robo" role="region" aria-live="polite" id="terminal-robo">
+                            <p>> Sistema ESP32 pronto. Clique em um cenário acima para simular a automação.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção 5: Tecnociência e Impacto Social -->
+        <section id="tecnociencia" class="section">
+            <div class="container">
+                <header class="section-header">
+                    <h2>Tecnociência: Sustentabilidade, Economia e Inclusão</h2>
+                    <p>Conectando o conhecimento científico da sala de aula com soluções reais para a comunidade.</p>
+                </header>
+
+                <div class="tecno-grid">
+                    <div class="tecno-card">
+                        <h3>💰 Aquecimento Prático e Econômico</h3>
+                        <p>De nada adianta aquecer a água durante o dia com coletores solares se ela perder todo o calor à noite. A cobertura automatizada conserva a energia acumulada e corta drasticamente gastos com aquecimento auxiliar.</p>
+                    </div>
+                    <div class="tecno-card">
+                        <h3>♿ Inclusão Digital e Esportiva</h3>
+                        <p>Uma piscina com temperatura estável permite atividades de hidroterapia e natação inclusiva o ano inteiro. Na web, este portal assegura acesso universal com VLibras, contraste validado, fonte para dislexia e navegação por teclado.</p>
+                    </div>
+                    <div class="tecno-card">
+                        <h3>🔬 Aprendizagem Interdisciplinar</h3>
+                        <p>A união entre Física (Lei de Stefan-Boltzmann), Programação (simuladores e gráficos), Robótica (sensores IV) e Tecnociência transforma estudantes em criadores de tecnologia sustentável.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção 6: Quiz Interativo com Pontuação -->
+        <section id="quiz" class="section bg-alt">
+            <div class="container">
+                <header class="section-header">
+                    <h2>Quiz Interativo: Teste seus Conhecimentos</h2>
+                    <p>Responda às 5 perguntas baseadas na pesquisa sobre radiação infravermelha e eficiência energética da piscina.</p>
+                </header>
+
+                <div class="quiz-container" id="quiz-box">
+                    <div class="quiz-progresso">
+                        <span id="quiz-contador">Pergunta 1 de 5</span>
+                        <span id="quiz-placar-parcial">Pontuação: 0</span>
+                    </div>
+
+                    <h3 id="quiz-pergunta" class="quiz-pergunta">Carregando pergunta...</h3>
+
+                    <div id="quiz-opcoes" class="quiz-opcoes" role="radiogroup" aria-labelledby="quiz-pergunta"></div>
+
+                    <div id="quiz-feedback" class="quiz-feedback" aria-live="polite"></div>
+
+                    <div class="quiz-acoes">
+                        <button type="button" id="btn-proxima-pergunta" class="btn btn-primary" disabled>Próxima Pergunta ➔</button>
+                        <button type="button" id="btn-reiniciar-quiz" class="btn btn-secondary" style="display: none;">🔄 Refazer Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rodapé e Mapa do Site -->
+    <footer id="mapa-site" class="footer">
+        <div class="container footer-grid">
+            <div>
+                <h3>TermoPool • Projeto Escolar</h3>
+                <p>Integração de Programação, Robótica, Física e Tecnociência.</p>
+                <p><small>Conteúdo fundamentado na pesquisa "Radiação infravermelha e perda de energia da piscina". Compatível com WCAG 2.1 AAA.</small></p>
+            </div>
+            <div>
+                <h4>Mapa do Site</h4>
+                <ul class="sitemap-list">
+                    <li><a href="#inicio">Início & Apresentação</a></li>
+                    <li><a href="#fisica">Física: Questões Orientadoras sobre IV</a></li>
+                    <li><a href="#mecanismos">Os 4 Mecanismos de Perda Térmica</a></li>
+                    <li><a href="#simulador">Simulador, Animação e Gráfico</a></li>
+                    <li><a href="#robotica">Robótica: Automação da Cobertura</a></li>
+                    <li><a href="#tecnociencia">Tecnociência & Impacto Social</a></li>
+                    <li><a href="#quiz">Quiz Interativo com Pontuação</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Acessibilidade por Teclado</h4>
+                <ul class="sitemap-list">
+                    <li><kbd>Tab</kbd> : Navegar entre botões e links</li>
+                    <li><kbd>Enter / Espaço</kbd> : Selecionar opção ou ativar</li>
+                    <li><kbd>Setas ◀ ▶</kbd> : Ajustar controles deslizantes</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Widget Oficial VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>
