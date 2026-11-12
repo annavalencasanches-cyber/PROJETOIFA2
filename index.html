@@ -1,1 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TermoPool | Radiação Infravermelha e Eficiência Térmica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Link de salto para navegação por teclado -->
+    <a href="#conteudo-principal" class="skip-link">Pular diretamente para o conteúdo principal</a>
 
+    <!-- Barra Superior de Acessibilidade -->
+    <header class="a11y-bar" role="region" aria-label="Ferramentas de Acessibilidade">
+        <div class="container a11y-controls">
+            <span><strong>Acessibilidade:</strong></span>
+            <button type="button" id="btn-contraste" aria-pressed="false">🌓 Alto Contraste</button>
+            <button type="button" id="btn-dislexia" aria-pressed="false">📖 Fonte Dislexia</button>
+            <button type="button" id="btn-fonte-mais" aria-label="Aumentar tamanho da fonte">A+</button>
+            <button type="button" id="btn-fonte-menos" aria-label="Diminuir tamanho da fonte">A-</button>
+            <button type="button" id="btn-ler-pagina" aria-pressed="false">🔊 Ouvir Resumo</button>
+        </div>
+    </header>
+
+    <!-- Navegação Principal -->
+    <nav class="navbar" aria-label="Menu Principal">
+        <div class="container nav-content">
+            <a href="#inicio" class="logo">
+                <span aria-hidden="true">☀️</span> Termo<span class="destaque-agua">Pool</span>
+            </a>
+            <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Abrir menu de navegação">
+                ☰
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#fisica">Física & Pesquisa</a></li>
+                <li><a href="#mecanismos">4 Mecanismos</a></li>
+                <li><a href="#simulador">Simulador Interativo</a></li>
+                <li><a href="#robotica">Robótica & Automação</a></li>
+                <li><a href="#tecnociencia">Tecnociência</a></li>
+                <li><a href="#mapa-site">Mapa do Site</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero / Apresentação -->
+    <section id="inicio" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-text">
+                <span class="badge">Projeto Interdisciplinar • Sol + Água</span>
+                <h1>Radiação Infravermelha e Perda de Energia da Piscina</h1>
+                <p>Integração entre Programação, Robótica, Física e Tecnociência para tornar o aquecimento da piscina do colégio econômico, sustentável e eficiente através do controle de emissão e absorção térmica.</p>
+                <div class="hero-actions">
+                    <a href="#simulador" class="btn btn-primary">Abrir Simulador Térmico</a>
+                    <a href="#fisica" class="btn btn-secondary">Ver Base Científica</a>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="piscina-ilustracao">
+                    <div class="sol-animado"></div>
+                    <div class="ondas-iv">
+                        <span>↑ IV Emitido</span>
+                        <span>↓ IV Atmosfera</span>
+                        <span>↑ IV Emitido</span>
+                    </div>
+                    <div class="agua-superficie">
+                        <p>Equilíbrio Térmico da Água</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main id="conteudo-principal">
+        <!-- Seção 1: Física (Questões Orientadoras baseadas no PDF) -->
+        <section id="fisica" class="section">
+            <div class="container">
+                <header class="section-header">
+                    <h2>Física: Emissão e Absorção de Radiação Térmica</h2>
+                    <p>Respostas fundamentadas na pesquisa científica sobre o comportamento térmico da piscina escolar.</p>
+                </header>
+
+                <div class="cards-grid">
+                    <article class="card" tabindex="0">
+                        <div class="card-num">01</div>
+                        <h3>Por que objetos aquecidos emitem radiação infravermelha?</h3>
+                        <p>Todo corpo com temperatura acima do zero absoluto possui partículas em constante agitação térmica. Esse movimento gera <strong>ondas eletromagnéticas</strong> (com comprimentos maiores que a luz vermelha visível) que transportam energia para o ambiente sem precisar de contato físico ou meio material. Na piscina, há uma troca constante: a água emite radiação IV e absorve radiação do solo, construções e atmosfera.</p>
+                    </article>
+
+                    <article class="card" tabindex="0">
+                        <div class="card-num">02</div>
+                        <h3>Como a temperatura influencia a emissão?</h3>
+                        <p>Pela <strong>Lei de Stefan-Boltzmann</strong> ($P = \varepsilon \cdot \sigma \cdot A \cdot T^4$), a potência irradiada cresce com a <strong>quarta potência</strong> da temperatura absoluta em Kelvin ($T^4$). Assim, elevar um pouco a temperatura da água aumenta muito a energia emitida. Quando a temperatura da água supera a temperatura radiativa efetiva do entorno (como o céu limpo à noite), ocorre perda líquida de calor.</p>
+                    </article>
+
+                    <article class="card" tabindex="0">
+                        <div class="card-num">03</div>
+                        <h3>Por que a piscina perde calor mesmo com o ar parado?</h3>
+                        <p>A ausência de vento não impede o resfriamento porque três mecanismos agem de forma independente: <strong>1) Radiação IV</strong> (propaga-se sem precisar de movimento do ar); <strong>2) Evaporação</strong> (moléculas escapam da superfície levando energia térmica, mesmo sem vento); e <strong>3) Convecção natural</strong> (o ar aquecido pela água sobe espontaneamente por diferença de densidade, dando lugar ao ar frio).</p>
+                    </article>
+
+                    <article class="card" tabindex="0">
+                        <div class="card-num">04</div>
+                        <h3>Como uma cobertura reduz as perdas de energia?</h3>
+                        <p>A cobertura atua como barreira física e radiativa entre a água e o ambiente: bloqueia a passagem de vapor (reduzindo a <strong>evaporação</strong>), impede o contato direto com o ar e o vento (reduzindo a <strong>convecção</strong>) e atua como superfície intermediária que altera a troca radiativa com o céu frio (reduzindo a perda por <strong>radiação IV</strong> conforme o material e isolamento da capa).</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção 2: Os 4 Mecanismos de Perda Térmica (Dados
