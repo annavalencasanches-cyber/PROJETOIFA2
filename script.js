@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDislexia = document.getElementById('btn-dislexia');
     const btnFonteMais = document.getElementById('btn-fonte-mais');
     const btnFonteMenos = document.getElementById('btn-fonte-menos');
+    const btnEspacamento = document.getElementById('btn-espacamento');
     const btnLerPagina = document.getElementById('btn-ler-pagina');
 
     let tamanhoFonte = 16;
@@ -30,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     btnDislexia.addEventListener('click', () => {
         const ativo = body.classList.toggle('fonte-dislexia');
         btnDislexia.setAttribute('aria-pressed', ativo);
+    });
+
+    btnEspacamento.addEventListener('click', () => {
+        const ativo = body.classList.toggle('espacamento-amplo');
+        btnEspacamento.setAttribute('aria-pressed', ativo);
     });
 
     btnFonteMais.addEventListener('click', () => {
@@ -53,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnLerPagina.setAttribute('aria-pressed', 'false');
                 btnLerPagina.textContent = '🔊 Ouvir Resumo';
             } else {
-                const textoResumo = "Projeto TermoPool. Radiação infravermelha e perda de energia da piscina escolar. Mesmo com o ar parado, a piscina perde calor por radiação infravermelha, evaporação e convecção natural. A emissão térmica cresce com a quarta potência da temperatura. O uso de uma cobertura térmica automatizada bloqueia a evaporação e reduz as perdas radiativas para o céu noturno.";
+                const textoResumo = "Projeto TermoPool. Radiação infravermelha e perda de energia da piscina escolar. Objetos aquecidos emitem radiação infravermelha pela agitação térmica das partículas, crescendo com a quarta potência da temperatura. Mesmo quando o ar está parado, a piscina perde calor por radiação infravermelha, evaporação e convecção natural. O uso de uma cobertura térmica automatizada bloqueia a evaporação e reduz perdas radiativas, tornando o aquecimento econômico.";
                 const fala = new SpeechSynthesisUtterance(textoResumo);
                 fala.lang = 'pt-BR';
                 fala.onend = () => {
@@ -70,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================
-    // 3. SIMULADOR TÉRMICO BASEADO NO PDF
+    // 3. SIMULADOR FÍSICO E GRÁFICO INTERATIVO
     // =========================================
     const sliderAgua = document.getElementById('temp-agua');
     const sliderAmbiente = document.getElementById('temp-ambiente');
@@ -83,7 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const resTotalKwh = document.getElementById('res-total-kwh');
     const resEconomia = document.getElementById('res-economia');
     const resDiagnostico = document.getElementById('res-diagnostico');
-    const barraAtual = document.getElementById('barra-atual');
+
+    // Estado compartilhado entre simulador e gráfico
+    let dadosPerdas = {
+        evaporacao: 0,
+        radiacao: 0,
+        conveccao: 0,
+        conducao: 0
+    };
 
     function atualizarSimulador() {
         const tAguaC = parseFloat(sliderAgua.value);
@@ -94,66 +107,116 @@ document.addEventListener('DOMContentLoaded', () => {
         valTempAgua.textContent = `${tAguaC}°C`;
         valTempAmbiente.textContent = `${tAmbC}°C`;
 
-        // Conversão para Kelvin (Lei de Stefan-Boltzmann)
+        // Lei de Stefan-Boltzmann: P = ε * σ * (T_agua^4 - T_amb^4)
         const tAguaK = tAguaC + 273.15;
         const tAmbK = tAmbC + 273.15;
-
-        const sigma = 5.67e-8; // Constante de Stefan-Boltzmann
+        const sigma = 5.67e-8;
         const emissividadeAgua = 0.95;
-        const areaPiscina = 125; // 125 m² (piscina escolar)
+        const areaPiscina = 125; // 125m² (piscina escolar)
 
-        // Perda líquida por radiação infravermelha (W/m²)
-        let perdaIvBruta = emissividadeAgua * sigma * (Math.pow(tAguaK, 4) - Math.pow(tAmbK, 4));
-        if (perdaIvBruta < 0) perdaIvBruta = 0;
+        let perdaIvBaseWm2 = emissividadeAgua * sigma * (Math.pow(tAguaK, 4) - Math.pow(tAmbK, 4));
+        if (perdaIvBaseWm2 < 0) perdaIvBaseWm2 = 0;
 
-        // Fator de vento (convecção forçada + aumento de evaporação)
-        const fatorVento = (condicaoAr === 'vento') ? 1.35 : 1.0;
+        // Perdas base em 12h noturnas (kWh) sem cobertura
+        const fatorVento = (condicaoAr === 'vento') ? 1.4 : 1.0;
+        const kwhRadiacaoBase = (perdaIvBaseWm2 * areaPiscina * 12) / 1000;
+        // Evaporação representa ~70% das perdas em condições de referência
+        const kwhEvaporacaoBase = (kwhRadiacaoBase * 2.8) * fatorVento;
+        const kwhConveccaoBase = (kwhRadiacaoBase * 0.45) * fatorVento;
+        const kwhConducaoBase = kwhRadiacaoBase * 0.15; // Parcela menor (paredes/solo)
 
-        // Perda total sem cobertura (IV + Evaporação ~70% + Convecção + Condução)
-        const perdaTotalSemCapaWm2 = (perdaIvBruta * 3.3) * fatorVento;
+        const totalSemCapa = kwhRadiacaoBase + kwhEvaporacaoBase + kwhConveccaoBase + kwhConducaoBase;
 
-        // Eficiência conforme o tipo de cobertura (Seção 8 do PDF)
-        let fatorRetencaoIv = 1.0;
-        let fatorRetencaoTotal = 1.0;
+        // Fatores de redução conforme tipo de cobertura
+        let fEvap = 1.0, fRad = 1.0, fConv = 1.0, fCond = 1.0;
 
         if (tipoCobertura === 'simples') {
-            fatorRetencaoIv = 0.75;    // Reduz parcialmente IV
-            fatorRetencaoTotal = 0.35; // Bloqueia evaporação, mas ainda irradia
+            fEvap = 0.10; // Bloqueia 90% da evaporação
+            fRad = 0.75;  // Lona simples ainda irradia boa parte do IV
+            fConv = 0.30; // Reduz contato direto com ar
         } else if (tipoCobertura === 'termica') {
-            fatorRetencaoIv = 0.25;    // Superfície intermediária isolante e refletiva
-            fatorRetencaoTotal = 0.20; // Reduz evaporação, convecção e radiação IV
+            fEvap = 0.05; // Bloqueia 95% da evaporação
+            fRad = 0.25;  // Superfície intermediária isolante e refletiva
+            fConv = 0.15; // Isola do vento e convecção
         }
 
-        const perdaIvEfetiva = perdaIvBruta * fatorRetencaoIv;
-        const perdaTotalEfetivaWm2 = perdaTotalSemCapaWm2 * fatorRetencaoTotal;
+        dadosPerdas.evaporacao = kwhEvaporacaoBase * fEvap;
+        dadosPerdas.radiacao = kwhRadiacaoBase * fRad;
+        dadosPerdas.conveccao = kwhConveccaoBase * fConv;
+        dadosPerdas.conducao = kwhConducaoBase * fCond;
 
-        // Energia perdida em 12h noturnas (kWh)
-        const kwhNoite = (perdaTotalEfetivaWm2 * areaPiscina * 12) / 1000;
-        const percentualPerda = Math.round(fatorRetencaoTotal * 100);
-        const economia = 100 - percentualPerda;
+        const totalAtual = dadosPerdas.evaporacao + dadosPerdas.radiacao + dadosPerdas.conveccao + dadosPerdas.conducao;
+        const ivEfetivoWm2 = perdaIvBaseWm2 * fRad;
+        const economia = totalSemCapa > 0 ? Math.round(((totalSemCapa - totalAtual) / totalSemCapa) * 100) : 0;
 
-        resIv.textContent = `${perdaIvEfetiva.toFixed(1)} W/m²`;
-        resTotalKwh.textContent = `${kwhNoite.toFixed(1)} kWh / noite`;
+        resIv.textContent = `${ivEfetivoWm2.toFixed(1)} W/m²`;
+        resTotalKwh.textContent = `${totalAtual.toFixed(1)} kWh`;
         resEconomia.textContent = `${economia}%`;
 
-        // Atualiza barra comparativa
-        barraAtual.style.width = `${Math.max(percentualPerda, 15)}%`;
-        barraAtual.textContent = `${percentualPerda}% da perda (${economia}% economizado)`;
-        barraAtual.style.backgroundColor = (economia >= 60) ? '#2E7D32' : (economia > 0 ? '#D97706' : '#D9534F');
-
-        // Diagnóstico pedagógico
         if (tipoCobertura === 'nenhuma') {
             resDiagnostico.textContent = condicaoAr === 'parado'
-                ? '⚠️ Mesmo com ar parado, a piscina perde calor por radiação IV, evaporação e convecção natural!'
-                : '🚨 Perda crítica! O vento acelera a evaporação e a convecção forçada somadas à radiação IV.';
+                ? '⚠️ Mesmo com ar parado, há forte perda por evaporação, radiação IV e convecção natural!'
+                : '🚨 Perda máxima! O vento acelera a evaporação e a convecção forçada.';
             resDiagnostico.style.color = '#D9534F';
         } else if (tipoCobertura === 'simples') {
-            resDiagnostico.textContent = '🟡 Evaporação bloqueada, mas a lona simples ainda permite perda moderada por radiação IV para o céu.';
+            resDiagnostico.textContent = '🟡 Evaporação controlada, mas ainda há perda relevante por radiação IV para o céu frio.';
             resDiagnostico.style.color = '#B45309';
         } else {
-            resDiagnostico.textContent = '✅ Máxima eficiência! A manta térmica bloqueia evaporação, convecção e reduz perdas por radiação IV.';
+            resDiagnostico.textContent = '✅ Alta eficiência! Cobertura reduz evaporação, convecção e perda líquida por radiação IV.';
             resDiagnostico.style.color = '#2E7D32';
         }
+
+        desenharGraficoBarras();
+    }
+
+    // =========================================
+    // 4. GRÁFICO INTERATIVO DE BARRAS (CANVAS)
+    // =========================================
+    const canvasGrafico = document.getElementById('canvas-grafico');
+    const ctxGraf = canvasGrafico.getContext('2d');
+
+    function desenharGraficoBarras() {
+        const w = canvasGrafico.width;
+        const h = canvasGrafico.height;
+        ctxGraf.clearRect(0, 0, w, h);
+
+        // Fundo escuro de alto contraste
+        ctxGraf.fillStyle = '#0F172A';
+        ctxGraf.fillRect(0, 0, w, h);
+
+        const categorias = [
+            { nome: 'Evaporação (~70% ref.)', valor: dadosPerdas.evaporacao, cor: '#38BDF8' },
+            { nome: 'Radiação Infravermelha', valor: dadosPerdas.radiacao, cor: '#FF7A00' },
+            { nome: 'Convecção (Ar)', valor: dadosPerdas.conveccao, cor: '#FACC15' },
+            { nome: 'Condução (Paredes/Solo)', valor: dadosPerdas.conducao, cor: '#A78BFA' }
+        ];
+
+        const maxEscala = 220; // Escala máxima em kWh para visualização comparativa
+        const margemEsq = 230;
+        const areaBarra = w - margemEsq - 90;
+
+        categorias.forEach((cat, idx) => {
+            const y = 35 + idx * 58;
+            const larguraBarra = Math.min((cat.valor / maxEscala) * areaBarra, areaBarra);
+
+            // Rótulo da categoria
+            ctxGraf.fillStyle = '#F8FAFC';
+            ctxGraf.font = 'bold 15px sans-serif';
+            ctxGraf.fillText(cat.nome, 20, y + 22);
+
+            // Trilha de fundo da barra
+            ctxGraf.fillStyle = '#1E293B';
+            ctxGraf.fillRect(margemEsq, y, areaBarra, 30);
+
+            // Barra preenchida
+            ctxGraf.fillStyle = cat.cor;
+            ctxGraf.fillRect(margemEsq, y, Math.max(larguraBarra, 4), 30);
+
+            // Valor numérico em kWh
+            ctxGraf.fillStyle = '#FFFFFF';
+            ctxGraf.font = 'bold 14px sans-serif';
+            ctxGraf.fillText(`${cat.valor.toFixed(1)} kWh`, margemEsq + areaBarra + 12, y + 21);
+        });
     }
 
     sliderAgua.addEventListener('input', atualizarSimulador);
@@ -163,118 +226,117 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarSimulador();
 
     // =========================================
-    // 4. ANIMAÇÃO GRÁFICA NO CANVAS (TROCA IV)
+    // 5. ANIMAÇÃO FLUXO DE RADIAÇÃO IV (CANVAS)
     // =========================================
-    const canvas = document.getElementById('canvas-termico');
-    const ctx = canvas.getContext('2d');
+    const canvasTermico = document.getElementById('canvas-termico');
+    const ctxTerm = canvasTermico.getContext('2d');
     let frame = 0;
 
-    function desenharAnimacao() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function animarFluxoIV() {
+        ctxTerm.clearRect(0, 0, canvasTermico.width, canvasTermico.height);
         const cobertura = selectCobertura.value;
 
-        // Céu / Atmosfera
-        ctx.fillStyle = '#0F172A';
-        ctx.fillRect(0, 0, canvas.width, 200);
+        // Céu noturno / Ambiente
+        ctxTerm.fillStyle = '#0F172A';
+        ctxTerm.fillRect(0, 0, canvasTermico.width, 190);
 
-        // Água da Piscina
-        ctx.fillStyle = '#0284C7';
-        ctx.fillRect(0, 200, canvas.width, 150);
+        // Água aquecida
+        ctxTerm.fillStyle = '#0284C7';
+        ctxTerm.fillRect(0, 190, canvasTermico.width, 140);
 
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillText(`Água (${sliderAgua.value}°C) • Emissão Contínua de IV`, 20, 280);
-        ctx.fillStyle = '#94A3B8';
-        ctx.fillText(`Atmosfera / Céu (${sliderAmbiente.value}°C)`, 20, 28);
+        ctxTerm.fillStyle = '#FFFFFF';
+        ctxTerm.font = 'bold 14px sans-serif';
+        ctxTerm.fillText(`Água da Piscina (${sliderAgua.value}°C)`, 20, 275);
+        ctxTerm.fillStyle = '#94A3B8';
+        ctxTerm.fillText(`Céu / Ambiente (${sliderAmbiente.value}°C)`, 20, 26);
 
-        // Desenho da Cobertura
+        // Desenho da Cobertura selecionada
         if (cobertura === 'simples') {
-            ctx.fillStyle = '#38BDF8';
-            ctx.fillRect(0, 193, canvas.width, 7);
-            ctx.fillStyle = '#E0F2FE';
-            ctx.fillText('LONA SIMPLES (Bloqueia vapor, permite parte do IV)', 95, 184);
+            ctxTerm.fillStyle = '#38BDF8';
+            ctxTerm.fillRect(0, 184, canvasTermico.width, 6);
+            ctxTerm.fillStyle = '#E0F2FE';
+            ctxTerm.fillText('LONA SIMPLES (Bloqueia vapor, deixa passar parte do IV)', 75, 175);
         } else if (cobertura === 'termica') {
-            ctx.fillStyle = '#F59E0B';
-            ctx.fillRect(0, 191, canvas.width, 10);
-            ctx.fillStyle = '#FEF3C7';
-            ctx.fillText('MANTA TÉRMICA (Barreira física + isolamento radiativo)', 85, 182);
+            ctxTerm.fillStyle = '#F59E0B';
+            ctxTerm.fillRect(0, 182, canvasTermico.width, 10);
+            ctxTerm.fillStyle = '#FEF3C7';
+            ctxTerm.fillText('MANTA TÉRMICA (Barreira física + isolamento de radiação IV)', 65, 173);
         }
 
-        // Setas de IV emitido pela água (Laranja) e retido (Verde)
+        // Ondas de Radiação IV emitidas pela água (Laranja) e refletidas (Verde)
         for (let i = 1; i <= 5; i++) {
             const x = i * 85;
-            const ciclo = (frame + i * 20) % 140;
-            const ySubindo = 190 - ciclo;
+            const ciclo = (frame + i * 22) % 135;
+            const ySubindo = 180 - ciclo;
 
-            if (cobertura === 'termica' && ySubindo < 191) {
-                // Onda retida/devolvida para a água
-                desenharSeta(x, 205 + (ciclo % 35), '#34D399', true);
-            } else if (cobertura === 'simples' && i % 2 === 0 && ySubindo < 193) {
-                desenharSeta(x, 205 + (ciclo % 35), '#34D399', true);
+            if (cobertura === 'termica' && ySubindo < 182) {
+                desenharSeta(x, 196 + (ciclo % 35), '#34D399', true);
+            } else if (cobertura === 'simples' && i % 2 === 0 && ySubindo < 184) {
+                desenharSeta(x, 196 + (ciclo % 35), '#34D399', true);
             } else {
                 desenharSeta(x, ySubindo, '#FF7A00', false);
             }
         }
 
-        // Setas de IV absorvido da atmosfera (Azul claro)
+        // Ondas de Radiação IV absorvidas do ambiente (Azul)
         for (let i = 1; i <= 3; i++) {
             const x = i * 130 + 30;
-            const yDescendo = 45 + ((frame + i * 30) % 130);
+            const yDescendo = 40 + ((frame + i * 35) % 125);
             desenharSeta(x, yDescendo, '#38BDF8', true);
         }
 
         frame += 1.2;
-        requestAnimationFrame(desenharAnimacao);
+        requestAnimationFrame(animarFluxoIV);
     }
 
     function desenharSeta(x, y, cor, paraBaixo) {
-        ctx.strokeStyle = cor;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x, y + 18);
-        ctx.stroke();
+        ctxTerm.strokeStyle = cor;
+        ctxTerm.lineWidth = 3;
+        ctxTerm.beginPath();
+        ctxTerm.moveTo(x, y);
+        ctxTerm.lineTo(x, y + 18);
+        ctxTerm.stroke();
 
-        ctx.fillStyle = cor;
-        ctx.beginPath();
+        ctxTerm.fillStyle = cor;
+        ctxTerm.beginPath();
         if (paraBaixo) {
-            ctx.moveTo(x - 5, y + 13);
-            ctx.lineTo(x + 5, y + 13);
-            ctx.lineTo(x, y + 21);
+            ctxTerm.moveTo(x - 5, y + 13);
+            ctxTerm.lineTo(x + 5, y + 13);
+            ctxTerm.lineTo(x, y + 21);
         } else {
-            ctx.moveTo(x - 5, y + 5);
-            ctx.lineTo(x + 5, y + 5);
-            ctx.lineTo(x, y - 3);
+            ctxTerm.moveTo(x - 5, y + 5);
+            ctxTerm.lineTo(x + 5, y + 5);
+            ctxTerm.lineTo(x, y - 3);
         }
-        ctx.fill();
+        ctxTerm.fill();
     }
 
-    desenharAnimacao();
+    animarFluxoIV();
 
     // =========================================
-    // 5. SIMULADOR DE ROBÓTICA (LÓGICA ESP32)
+    // 6. SIMULADOR DE ROBÓTICA (LÓGICA ESP32)
     // =========================================
     const botoesCenario = document.querySelectorAll('.btn-cenario');
     const terminalRobo = document.getElementById('terminal-robo');
 
     const logsCenarios = {
         'dia-sol': `
-            <p>> [SENSOR LDR]: Radiação solar intensa detectada.</p>
-            <p>> [MLX90614]: Água = 28.0°C | Ar = 29.5°C.</p>
-            <p>> [DECISÃO ESP32]: Ganho solar positivo + Horário de aulas.</p>
+            <p>> [LDR]: Radiação solar alta detectada (Período Diurno).</p>
+            <p>> [MLX90614]: Temp. Água = 28.0°C | Temp. Ar = 29.5°C.</p>
+            <p>> [DECISÃO ESP32]: Ganho térmico solar ativo + Horário de aulas.</p>
             <p>> [ATUADOR]: Enrolando manta térmica para absorção solar.</p>
         `,
         'noite-limpa': `
-            <p>> [SENSOR LDR]: Ausência de luz solar (Período noturno).</p>
-            <p>> [MLX90614]: Água = 28.0°C | Céu limpo radiativo frio.</p>
-            <p>> [ALERTA TÉRMICO]: Perda líquida elevada por radiação IV e evaporação!</p>
-            <p>> [ATUADOR]: Acionando motor DC -> Manta térmica ESTENDIDA.</p>
+            <p>> [LDR]: Escuridão detectada (Período Noturno).</p>
+            <p>> [MLX90614]: Temp. Água = 28.0°C | Céu limpo radiativo frio.</p>
+            <p>> [ALERTA]: Alta emissão líquida de radiação IV e evaporação!</p>
+            <p>> [ATUADOR]: Acionando Motor DC -> Piscina COBERTA automaticamente.</p>
         `,
         'ar-parado': `
-            <p>> [ANEMÔMETRO]: Velocidade do vento = 0 km/h (Ar parado).</p>
-            <p>> [DHT22 / MLX90614]: Água = 27.5°C | Ar = 17.0°C.</p>
+            <p>> [ANEMÔMETRO]: Vento = 0 km/h (Ar relativamente parado).</p>
+            <p>> [DHT22 / MLX90614]: Água = 27.5°C | Ar = 16.5°C.</p>
             <p>> [DECISÃO ESP32]: Perda ativa por radiação IV, evaporação e convecção natural.</p>
-            <p>> [ATUADOR]: Como não há aulas agora, manta térmica ESTENDIDA.</p>
+            <p>> [ATUADOR]: Sem aulas no momento -> Manta térmica ESTENDIDA.</p>
         `
     };
 
@@ -284,4 +346,153 @@ document.addEventListener('DOMContentLoaded', () => {
             terminalRobo.innerHTML = logsCenarios[cenario];
         });
     });
+
+    // =========================================
+    // 7. QUIZ INTERATIVO COM PONTUAÇÃO
+    // =========================================
+    const questoesQuiz = [
+        {
+            pergunta: "1. Por que a água aquecida de uma piscina emite radiação infravermelha?",
+            opcoes: [
+                "Apenas quando o vento sopra sobre a superfície da água.",
+                "Porque suas partículas possuem energia térmica e estão em constante agitação, gerando ondas eletromagnéticas.",
+                "Somente durante o dia, enquanto recebe luz solar direta."
+            ],
+            correta: 1,
+            explicacao: "Correto! Todo corpo acima do zero absoluto possui partículas agitadas que emitem radiação eletromagnética (na faixa do infravermelho em temperaturas comuns), sem precisar de contato ou meio material."
+        },
+        {
+            pergunta: "2. De acordo com a Lei de Stefan-Boltzmann, como a temperatura influencia a emissão de radiação?",
+            opcoes: [
+                "A potência emitida cresce proporcionalmente à quarta potência da temperatura absoluta (T⁴).",
+                "A temperatura não altera a emissão de radiação infravermelha.",
+                "Quanto maior a temperatura da água, menor é a radiação emitida."
+            ],
+            correta: 0,
+            explicacao: "Exato! Na equação P = ε·σ·A·T⁴, a temperatura absoluta (em Kelvin) está elevada à quarta potência, fazendo a emissão crescer rapidamente quando a água aquece."
+        },
+        {
+            pergunta: "3. Por que a piscina continua perdendo calor mesmo quando o ar está relativamente parado (sem vento)?",
+            opcoes: [
+                "Porque sem vento a condução pelo fundo da piscina aumenta 10 vezes.",
+                "Porque radiação infravermelha, evaporação e convecção natural continuam ocorrendo sem depender do vento.",
+                "Na verdade, sem vento a piscina não perde nenhuma energia térmica."
+            ],
+            correta: 1,
+            explicacao: "Muito bem! A radiação IV propaga-se sem meio material, moléculas continuam evaporando da superfície e a diferença de temperatura gera correntes espontâneas de convecção natural."
+        },
+        {
+            pergunta: "4. Segundo dados do Departamento de Energia dos EUA citados na pesquisa, qual processo responde por cerca de 70% das perdas térmicas em piscinas?",
+            opcoes: [
+                "Condução térmica pelas paredes de azulejo.",
+                "Evaporação da água na superfície.",
+                "Reflexão da luz azul."
+            ],
+            correta: 1,
+            explicacao: "Isso mesmo! A evaporação retira grande quantidade de energia térmica quando as moléculas passam do estado líquido para o gasoso."
+        },
+        {
+            pergunta: "5. Como uma cobertura térmica automatizada torna o aquecimento da piscina escolar mais econômico?",
+            opcoes: [
+                "Bloqueando a evaporação, reduzindo a convecção com o ar e atuando como barreira intermediária contra perdas por radiação IV.",
+                "Aumentando a velocidade do vento sobre a superfície durante a madrugada.",
+                "Resfriando a água para impedir a agitação das moléculas."
+            ],
+            correta: 0,
+            explicacao: "Perfeito! Ao conservar o calor acumulado durante o dia, a cobertura reduz drasticamente a necessidade de gastar energia para reaquecer a piscina."
+        }
+    ];
+
+    let indiceAtual = 0;
+    let pontuacao = 0;
+
+    const quizContador = document.getElementById('quiz-contador');
+    const quizPlacar = document.getElementById('quiz-placar-parcial');
+    const quizPergunta = document.getElementById('quiz-pergunta');
+    const quizOpcoes = document.getElementById('quiz-opcoes');
+    const quizFeedback = document.getElementById('quiz-feedback');
+    const btnProxima = document.getElementById('btn-proxima-pergunta');
+    const btnReiniciar = document.getElementById('btn-reiniciar-quiz');
+
+    function carregarPergunta() {
+        const q = questoesQuiz[indiceAtual];
+        quizContador.textContent = `Pergunta ${indiceAtual + 1} de ${questoesQuiz.length}`;
+        quizPlacar.textContent = `Pontuação: ${pontuacao}`;
+        quizPergunta.textContent = q.pergunta;
+        quizOpcoes.innerHTML = '';
+        quizFeedback.className = 'quiz-feedback';
+        quizFeedback.textContent = '';
+        btnProxima.disabled = true;
+
+        q.opcoes.forEach((textoOpcao, index) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'opcao-btn';
+            btn.textContent = textoOpcao;
+            btn.addEventListener('click', () => verificarResposta(index, btn));
+            quizOpcoes.appendChild(btn);
+        });
+    }
+
+    function verificarResposta(indiceEscolhido, botaoClicado) {
+        const q = questoesQuiz[indiceAtual];
+        const todosBotoes = quizOpcoes.querySelectorAll('.opcao-btn');
+
+        todosBotoes.forEach((btn, idx) => {
+            btn.disabled = true;
+            if (idx === q.correta) {
+                btn.classList.add('correta');
+            }
+        });
+
+        if (indiceEscolhido === q.correta) {
+            pontuacao++;
+            quizPlacar.textContent = `Pontuação: ${pontuacao}`;
+            quizFeedback.textContent = `✅ ${q.explicacao}`;
+        } else {
+            botaoClicado.classList.add('errada');
+            quizFeedback.textContent = `❌ Resposta incorreta. ${q.explicacao}`;
+        }
+
+        quizFeedback.classList.add('visivel');
+        btnProxima.disabled = false;
+        btnProxima.focus();
+    }
+
+    btnProxima.addEventListener('click', () => {
+        indiceAtual++;
+        if (indiceAtual < questoesQuiz.length) {
+            carregarPergunta();
+        } else {
+            mostrarResultadoFinal();
+        }
+    });
+
+    function mostrarResultadoFinal() {
+        quizContador.textContent = 'Quiz Concluído!';
+        quizPergunta.textContent = `Você acertou ${pontuacao} de ${questoesQuiz.length} questões (${Math.round((pontuacao / questoesQuiz.length) * 100)}%)!`;
+        quizOpcoes.innerHTML = '';
+        quizFeedback.className = 'quiz-feedback visivel';
+
+        if (pontuacao === questoesQuiz.length) {
+            quizFeedback.textContent = '🏆 Excelente! Você domina os conceitos de radiação infravermelha, transferência de calor e eficiência energética na piscina escolar.';
+        } else if (pontuacao >= 3) {
+            quizFeedback.textContent = '👏 Muito bom! Você compreendeu os principais mecanismos térmicos. Revise o simulador para gabaritar na próxima tentativa.';
+        } else {
+            quizFeedback.textContent = '📚 Continue explorando as seções de Física e o Simulador acima para reforçar os conceitos e tente novamente!';
+        }
+
+        btnProxima.style.display = 'none';
+        btnReiniciar.style.display = 'inline-block';
+    }
+
+    btnReiniciar.addEventListener('click', () => {
+        indiceAtual = 0;
+        pontuacao = 0;
+        btnProxima.style.display = 'inline-block';
+        btnReiniciar.style.display = 'none';
+        carregarPergunta();
+    });
+
+    carregarPergunta();
 });
